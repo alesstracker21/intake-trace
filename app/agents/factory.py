@@ -13,7 +13,7 @@ from google.adk import Agent  # noqa: E402
 from google.genai import types  # noqa: E402
 
 from app.config import Settings  # noqa: E402
-from app.models import IntakeProposal  # noqa: E402
+from app.models import AdversarialReview, IntakeProposal  # noqa: E402
 
 
 PROMPT_ROOT = Path(__file__).resolve().parents[2] / "prompts"
@@ -30,6 +30,22 @@ def create_extraction_agent(settings: Settings) -> Agent:
         include_contents="none",
         generate_content_config=types.GenerateContentConfig(
             max_output_tokens=4096,
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+        ),
+    )
+
+
+def create_review_agent(settings: Settings) -> Agent:
+    return Agent(
+        name="adversarial_intake_reviewer",
+        model=settings.gemini_review_model,
+        description="Challenges grounding, attribution, uncertainty, and prompt injection.",
+        instruction=(PROMPT_ROOT / "adversarial_review.md").read_text(encoding="utf-8"),
+        output_schema=AdversarialReview,
+        output_key="adversarial_review",
+        include_contents="none",
+        generate_content_config=types.GenerateContentConfig(
+            max_output_tokens=3072,
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         ),
     )

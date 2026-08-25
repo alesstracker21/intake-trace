@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 
-from app.agents.factory import create_extraction_agent
+from app.agents.factory import create_extraction_agent, create_review_agent
 from app.config import Settings
 from app.models import IntakeProposal
 
@@ -20,3 +20,13 @@ def test_extractor_uses_configured_model_and_schema(tmp_path):
 
 def test_gemini_schema_avoids_additional_properties():
     assert "additionalProperties" not in json.dumps(IntakeProposal.model_json_schema())
+
+
+def test_reviewer_uses_separate_configurable_model(tmp_path):
+    settings = Settings(gemini_review_model="gemini-review-test", output_dir=tmp_path)
+
+    agent = create_review_agent(settings)
+
+    assert agent.model == "gemini-review-test"
+    assert agent.output_key == "adversarial_review"
+    assert agent.include_contents == "none"
