@@ -1,0 +1,18 @@
+{
+  "submission_id": "FORM-SYNTH-002",
+  "submitted_at": "2026-08-20T10:15:00-05:00",
+  "form_name": "Potential Client Intake",
+  "provider": "generic_webhook",
+  "fields": {
+    "potential_client_name": "Camille Turner",
+    "relationship_to_client": "Self",
+    "email": "camille.turner@example.test",
+    "phone": "",
+    "facility_or_provider": "Mercy General Hospital",
+    "date_of_incident": "2026-08-03",
+    "injury_description": "A pressure ulcer developed during a six-day admission and now requires outpatient wound care.",
+    "referral_source": "",
+    "additional_details": "I am home now and have a wound-clinic appointment on Friday.",
+    "consent_to_contact": true
+  }
+}

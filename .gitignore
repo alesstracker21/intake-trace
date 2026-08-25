@@ -203,6 +203,10 @@ cython_debug/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
 
+# IntakeTrace local runtime artifacts
+outputs/
+.env.local
+
 # Ruff stuff:
 .ruff_cache/
 

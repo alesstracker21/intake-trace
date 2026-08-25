@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "intake-trace"
+version = "0.1.0"
+description = "Evidence-backed AI intake processing for legal teams"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi==0.141.1",
+  "google-adk==2.7.1",
+  "opentelemetry-api==1.42.1",
+  "opentelemetry-exporter-otlp-proto-http==1.42.1",
+  "opentelemetry-sdk==1.42.1",
+  "pydantic==2.13.4",
+  "python-dotenv==1.2.3",
+  "uvicorn[standard]==0.52.4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx==0.28.1",
+  "pytest==9.1.1",
+]
+
+[project.scripts]
+intake-trace = "app.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
