@@ -52,8 +52,13 @@ jobs:
       - name: Set up Google Cloud CLI
         uses: google-github-actions/setup-gcloud@v3
 
-      - name: Build container
-        run: gcloud builds submit --project "$PROJECT_ID" --tag "$IMAGE_REPOSITORY:$GITHUB_SHA" .
+      - name: Configure Artifact Registry authentication
+        run: gcloud auth configure-docker "$REGION-docker.pkg.dev" --quiet
+
+      - name: Build and push container
+        run: |
+          docker build --tag "$IMAGE_REPOSITORY:$GITHUB_SHA" .
+          docker push "$IMAGE_REPOSITORY:$GITHUB_SHA"
 
       - name: Deploy public service
         run: |

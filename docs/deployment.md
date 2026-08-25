@@ -40,7 +40,8 @@ Every push to `main` runs `.github/workflows/deploy-cloud-run.yml`. The workflow
 1. installs the application and runs all tests;
 2. exchanges GitHub's short-lived OIDC token for a repository-scoped Google
    identity;
-3. builds the Docker image with Cloud Build;
+3. builds the Docker image on the GitHub runner and pushes it to Artifact
+   Registry;
 4. deploys the new public Cloud Run revision; and
 5. calls `/health` without credentials.
 
