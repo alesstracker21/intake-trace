@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -20,17 +20,27 @@ def _as_bool(name: str, default: bool = False) -> bool:
 
 @dataclass(frozen=True)
 class Settings:
-    app_env: str = os.getenv("APP_ENV", "local")
-    log_level: str = os.getenv("LOG_LEVEL", "INFO")
-    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
-    gemini_review_model: str = os.getenv(
-        "GEMINI_REVIEW_MODEL", os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
+    app_env: str = field(default_factory=lambda: os.getenv("APP_ENV", "local"))
+    log_level: str = field(default_factory=lambda: os.getenv("LOG_LEVEL", "INFO"))
+    gemini_model: str = field(
+        default_factory=lambda: os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
     )
-    output_dir: Path = Path(os.getenv("OUTPUT_DIR", str(PROJECT_ROOT / "outputs")))
-    otel_enabled: bool = _as_bool("OTEL_ENABLED")
-    otel_service_name: str = os.getenv("OTEL_SERVICE_NAME", "intake-trace")
-    otel_endpoint: str = os.getenv(
-        "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://localhost:4318/v1/traces"
+    gemini_review_model: str = field(
+        default_factory=lambda: os.getenv(
+            "GEMINI_REVIEW_MODEL", os.getenv("GEMINI_MODEL", "gemini-3.7-flash")
+        )
+    )
+    output_dir: Path = field(
+        default_factory=lambda: Path(os.getenv("OUTPUT_DIR", str(PROJECT_ROOT / "outputs")))
+    )
+    otel_enabled: bool = field(default_factory=lambda: _as_bool("OTEL_ENABLED"))
+    otel_service_name: str = field(
+        default_factory=lambda: os.getenv("OTEL_SERVICE_NAME", "intake-trace")
+    )
+    otel_endpoint: str = field(
+        default_factory=lambda: os.getenv(
+            "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", "http://localhost:4318/v1/traces"
+        )
     )
 
 
