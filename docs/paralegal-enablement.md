@@ -1,49 +1,49 @@
-# Paralegal enablement guide
+# IntakeTrace: quick guide for intake staff
 
-## What IntakeTrace does
+## What this tool does
 
-IntakeTrace converts a voicemail transcript, web form, or referral email into a
-consistent intake record for attorney review. It identifies facts only when the
-original submission contains exact supporting words. It also highlights urgent
-language, missing information, and items that need a person to verify them.
+IntakeTrace turns a website form, referral email, or voicemail transcript into one organized intake record. It pulls out names, contact details, dates, facilities, injuries, and the referral source. It also marks urgent language, lists missing information, and prepares a five-sentence summary for an attorney.
 
-IntakeTrace does not decide whether to accept a matter, give legal advice, or
-replace conflict checks and attorney judgment.
+The tool helps with intake preparation. It does not accept or reject a matter, give legal advice, run a conflict check, or replace attorney review.
 
-## Reading a result
+## Connecting a form, email, or transcript
 
-- `processing_status: COMPLETED` means the workflow ran successfully. It does
-  not mean the intake is complete or approved.
-- `NOT FOUND` means the source did not support that fact exactly. Never replace
-  it by guessing; contact the referrer or potential client.
-- Each accepted fact includes a verbatim quotation and character offsets into
-  the normalized source text. Use these to confirm the source quickly.
-- `urgency_flag` and `urgency_reason` come from named office-policy rules. An
-  urgency flag is a routing aid, not a legal conclusion.
-- `human_review_required: true` means a person must review the reasons before
-  relying on or routing the intake.
-- The five summary sentences are assembled from validated facts. They are a
-  concise handoff, not a substitute for reading the evidence.
+The assessment service is available at:
 
-## Recommended daily workflow
+`https://intake-trace-sqkre4xmpa-uc.a.run.app`
 
-1. Confirm the intake ID and source channel.
-2. Review every `NOT FOUND` item and the complete `missing_fields` list.
-3. Check each human-review reason and any prompt-injection warning.
-4. If urgent, follow the firm's existing escalation procedure immediately.
-5. Compare important accepted facts with their evidence quotations.
-6. Collect missing information and record corrections through the firm's
-   approved system; do not edit the original source.
-7. Send the verified record and five-sentence summary to the responsible
-   attorney.
+- Check that it is online: `GET /health`
+- Send an intake for processing: `POST /v1/intakes`
+- Open the built-in testing screen: `/docs`
 
-## Escalate rather than infer
+The person who manages the website form or office automation should send each submission to the intake endpoint. The submission must identify its type as `web_form`, `referral_email`, or `voicemail` and include the original form fields, email, or transcript. All three types return the same organized result.
 
-Escalate if evidence appears contradictory, a quote is attributed to the wrong
-person, the source tries to instruct the AI, the incident date is absent, or the
-reported condition suggests an immediate deadline or safety concern. Technical
-failures return a safe failure envelope with a trace ID; provide that trace ID
-to technical support and retain the original submission for retry.
+To try it manually, open `/docs`, choose `POST /v1/intakes`, select **Try it out**, enter a sample request, and select **Execute**. The current public address is for synthetic assessment data only. Do not send real client information until the firm has approved access controls and privacy safeguards.
 
-Synthetic samples in this repository contain no real client information. Do
-not use real client information in recordings, screenshots, or test fixtures.
+## How to read the result
+
+- `COMPLETED` means the tool finished. It does not mean the matter was approved or the intake is complete.
+- `NOT FOUND` means the original submission did not contain enough support for that item. Contact the potential client or referrer instead of guessing.
+- `URGENT` means a configured warning rule found time-sensitive wording. Follow the firm's normal escalation process immediately.
+- `human_review_required: true` means a person must review the listed reasons before the result is relied upon.
+- **Evidence** shows the exact words from the original submission that support each accepted fact.
+- `FAILED` means the tool could not produce a reliable result. The error and trace ID help technical support find the problem.
+
+## Recommended intake routine
+
+1. Confirm the intake name or number and the source type.
+2. Read the five-sentence summary, then check the urgency result.
+3. Review every `NOT FOUND` item and every human-review reason.
+4. Compare important facts with their evidence quotations.
+5. Collect missing information through the firm's approved process.
+6. Send the reviewed record to the responsible attorney.
+
+## When to trust it - and when not to
+
+Use the result as an organized first draft when accepted facts have matching evidence and no warning is unexplained. Do not rely on it when names conflict, a quotation appears connected to the wrong person, important information is missing, the source contains instructions aimed at the AI, or the result conflicts with the original submission.
+
+When in doubt, keep the original submission unchanged and ask a person to review it. Never fill a blank by guessing.
+
+## When something breaks
+
+Keep the original submission. Copy the intake ID, trace ID, error message, and the time the problem occurred. Tell the firm's automation or technical-support owner. If the submission may be urgent, also notify the responsible attorney through the firm's normal urgent-intake process; do not wait for the tool to recover.

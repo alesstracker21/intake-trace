@@ -206,6 +206,7 @@ tempCodeRunnerFile.py
 # IntakeTrace local runtime artifacts
 outputs/
 .env.local
+tmp/
 
 # Ruff stuff:
 .ruff_cache/
