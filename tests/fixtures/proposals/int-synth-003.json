@@ -1,0 +1,18 @@
+{
+  "potential_client_name": {"value": "Eleanor Watkins", "evidence_quotes": ["involving Eleanor Watkins"]},
+  "contact_information": [
+    {
+      "type": "email", "value": "michael.chen@chen-soto.example.test", "contact_name": "Michael Chen",
+      "relationship_to_client": "referring attorney",
+      "evidence_quotes": ["From: Michael Chen <michael.chen@chen-soto.example.test>", "I may have a referral for a possible neglect matter involving Eleanor Watkins"]
+    },
+    {
+      "type": "phone", "value": "646-555-0199", "contact_name": "Laura Watkins",
+      "relationship_to_client": "daughter", "evidence_quotes": ["Laura Watkins", "646-555-0199"]
+    }
+  ],
+  "facilities_or_providers": [{"name": "Cedar Grove Skilled Nursing Facility", "role": "incident_facility", "evidence_quotes": ["Cedar Grove Skilled Nursing Facility"]}],
+  "date_of_incident": {"value": "August 12, 2026", "evidence_quotes": ["August 12, 2026"]},
+  "injury_type": {"value": "serious infection", "evidence_quotes": ["serious infection"]},
+  "referral_source": {"value": "Michael Chen", "evidence_quotes": ["From: Michael Chen <michael.chen@chen-soto.example.test>"]}
+}

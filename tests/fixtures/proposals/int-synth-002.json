@@ -1,0 +1,12 @@
+{
+  "potential_client_name": {"value": "Camille Turner", "evidence_quotes": ["Potential client name: Camille Turner"]},
+  "contact_information": [{
+    "type": "email", "value": "camille.turner@example.test", "contact_name": "Camille Turner",
+    "relationship_to_client": "self",
+    "evidence_quotes": ["Potential client name: Camille Turner", "Relationship to potential client: Self", "Email: camille.turner@example.test"]
+  }],
+  "facilities_or_providers": [{"name": "Mercy General Hospital", "role": "incident_facility", "evidence_quotes": ["Facility or provider: Mercy General Hospital"]}],
+  "date_of_incident": {"value": "2026-08-03", "evidence_quotes": ["Date of incident: 2026-08-03"]},
+  "injury_type": {"value": "pressure ulcer", "evidence_quotes": ["Injury description: A pressure ulcer developed during a six-day admission and now requires outpatient wound care."]},
+  "referral_source": {"value": "NOT FOUND", "evidence_quotes": []}
+}

@@ -1,0 +1,15 @@
+{
+  "potential_client_name": {"value": "Arun Desai", "evidence_quotes": ["my dad, Arun Desai"]},
+  "contact_information": [{
+    "type": "phone", "value": "312-555-0148", "contact_name": "Lila Desai",
+    "relationship_to_client": "daughter",
+    "evidence_quotes": ["my name is Lila Desai", "Arun's daughter, at 312-555-0148"]
+  }],
+  "facilities_or_providers": [
+    {"name": "Brookside Rehabilitation Center", "role": "incident_facility", "evidence_quotes": ["Brookside Rehabilitation Center"]},
+    {"name": "St. Anne's Hospital", "role": "current_provider", "evidence_quotes": ["St. Anne's Hospital"]}
+  ],
+  "date_of_incident": {"value": "August 17, 2026", "evidence_quotes": ["August 17, 2026"]},
+  "injury_type": {"value": "fractured hip", "evidence_quotes": ["he has a fractured hip"]},
+  "referral_source": {"value": "coworker Daniel Ruiz", "evidence_quotes": ["my coworker Daniel Ruiz"]}
+}
