@@ -9,6 +9,7 @@ from pathlib import Path
 from app.api.dependencies import get_pipeline
 from app.config import PROJECT_ROOT, get_settings
 from app.models import IntakeRequest
+from app.observability import configure_telemetry, shutdown_telemetry
 
 
 SAMPLES = PROJECT_ROOT / "samples"
@@ -82,7 +83,12 @@ def main() -> None:
     args = parse_args()
     if args.command == "check":
         raise SystemExit(check_configuration())
-    raise SystemExit(asyncio.run(run_demo(args.output_dir, args.no_write)))
+    configure_telemetry(get_settings())
+    try:
+        exit_code = asyncio.run(run_demo(args.output_dir, args.no_write))
+    finally:
+        shutdown_telemetry()
+    raise SystemExit(exit_code)
 
 
 if __name__ == "__main__":

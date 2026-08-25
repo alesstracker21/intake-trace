@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -9,6 +10,7 @@ from fastapi.responses import JSONResponse
 from app import __version__
 from app.api.routes import router
 from app.config import get_settings
+from app.observability import configure_telemetry, shutdown_telemetry
 
 
 settings = get_settings()
@@ -17,10 +19,18 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s %(message)s",
 )
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    configure_telemetry(settings)
+    yield
+    shutdown_telemetry()
+
+
 app = FastAPI(
     title="IntakeTrace",
     version=__version__,
     description="Evidence-backed AI intake processing with deterministic safety gates.",
+    lifespan=lifespan,
 )
 app.include_router(router)
 
@@ -41,7 +51,7 @@ async def request_validation_error(_: Request, __: RequestValidationError) -> JS
 
 @app.exception_handler(Exception)
 async def unexpected_error(_: Request, __: Exception) -> JSONResponse:
-    logging.getLogger(__name__).exception("Unhandled API error")
+    logging.getLogger(__name__).error("Unhandled API error")
     return JSONResponse(
         status_code=500,
         content={
