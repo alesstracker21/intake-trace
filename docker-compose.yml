@@ -1,4 +1,30 @@
 services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.7-flash}
+      GEMINI_REVIEW_MODEL: ${GEMINI_REVIEW_MODEL:-gemini-3.7-flash}
+      OTEL_ENABLED: "true"
+      OTEL_SERVICE_NAME: intake-trace
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://jaeger:4318/v1/traces
+      ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS: "false"
+      OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: ""
+    depends_on:
+      - jaeger
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
   jaeger:
     image: cr.jaegertracing.io/jaegertracing/jaeger:2.20.0
     ports:
