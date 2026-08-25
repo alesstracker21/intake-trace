@@ -10,7 +10,7 @@ existing workloads:
 - Service: `intake-trace`
 - Revision: `intake-trace-00001-6g5`
 - URL: <https://intake-trace-sqkre4xmpa-uc.a.run.app>
-- Access: authenticated callers only
+- Access: public; no caller authentication required
 - Scaling: zero to one instance
 - Runtime identity: dedicated `intake-trace-runtime` service account
 
@@ -21,22 +21,33 @@ complete third intake: it returned `COMPLETED`, `NOT FOUND` for the absent date,
 the expected missing-field list, required human review, five summary sentences,
 and a trace ID.
 
-To verify health with the currently signed-in Google account:
+To verify health without credentials:
 
 ```powershell
-$url = gcloud run services describe intake-trace `
-  --project intake-trace-20260824-a89542 `
-  --region us-central1 `
-  --format="value(status.url)"
-$token = gcloud auth print-identity-token
-Invoke-RestMethod -Uri "$url/health" `
-  -Headers @{ Authorization = "Bearer $token" }
+Invoke-RestMethod -Uri `
+  "https://intake-trace-sqkre4xmpa-uc.a.run.app/health"
 ```
 
-Keep the service private unless public access is a deliberate product decision.
-For a production launch, add caller authentication, rate limits, budget alerts,
-retention rules, and a managed OTLP destination before increasing the maximum
-instance count.
+Because the assessment endpoint is public, the service remains capped at one
+instance and scales to zero. Before handling real client data, add caller
+authentication, rate limits, budget alerts, retention rules, and a managed OTLP
+destination.
+
+## Deployment on repository push
+
+Every push to `main` runs `.github/workflows/deploy-cloud-run.yml`. The workflow:
+
+1. installs the application and runs all tests;
+2. exchanges GitHub's short-lived OIDC token for a repository-scoped Google
+   identity;
+3. builds the Docker image with Cloud Build;
+4. deploys the new public Cloud Run revision; and
+5. calls `/health` without credentials.
+
+The Google identity accepts tokens only from the
+`alesstracker21/intake-trace` repository's `main` branch. No service-account key
+or API key is stored in GitHub. The runtime reads the Gemini key from Secret
+Manager.
 
 ## Local Docker
 
@@ -59,6 +70,4 @@ No database, volume, or Redis service is required for this assessment. Any
 demonstration JSON written to `outputs/` is ephemeral on Railway and Cloud Run;
 use managed object storage or a database if persistence becomes a requirement.
 
-Repository-driven deployment can be added later as a separate CI/CD change.
-That workflow should use workload identity or another short-lived credential,
-run tests before deployment, and avoid storing a long-lived cloud key in GitHub.
+The same Dockerfile remains suitable for a later Railway deployment.

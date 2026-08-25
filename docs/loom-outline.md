@@ -34,6 +34,7 @@ and assembly.
 ## 2:25-3:00 — engineering handoff
 
 Briefly show the tests, prompt files, urgency policy, paralegal guide, and
-Dockerfile. State that Cloud Run is currently private, secrets come from Secret
-Manager, instances scale to zero, and the same container has a straightforward
-Railway path. Do not display `.env`, API keys, or real client data.
+Dockerfile. State that the assessment endpoint is public, pushes to `main`
+deploy automatically using short-lived GitHub identity, secrets come from Secret
+Manager, and instances scale to zero. Do not display `.env`, API keys, or real
+client data.

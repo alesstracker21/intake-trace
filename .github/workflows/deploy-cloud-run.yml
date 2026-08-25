@@ -1,0 +1,79 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-cloud-run
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: intake-trace-20260824-a89542
+  PROJECT_NUMBER: "313312115264"
+  REGION: us-central1
+  SERVICE: intake-trace
+  RUNTIME_SERVICE_ACCOUNT: intake-trace-runtime@intake-trace-20260824-a89542.iam.gserviceaccount.com
+  IMAGE_REPOSITORY: us-central1-docker.pkg.dev/intake-trace-20260824-a89542/cloud-run-source-deploy/intake-trace
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install and test
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pytest -q
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/313312115264/locations/global/workloadIdentityPools/github-actions/providers/intake-trace
+          service_account: intake-trace-deployer@intake-trace-20260824-a89542.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Build container
+        run: gcloud builds submit --project "$PROJECT_ID" --tag "$IMAGE_REPOSITORY:$GITHUB_SHA" .
+
+      - name: Deploy public service
+        run: |
+          gcloud run deploy "$SERVICE" \
+            --project "$PROJECT_ID" \
+            --region "$REGION" \
+            --image "$IMAGE_REPOSITORY:$GITHUB_SHA" \
+            --service-account "$RUNTIME_SERVICE_ACCOUNT" \
+            --set-secrets "GOOGLE_API_KEY=intake-trace-google-api-key:latest" \
+            --set-env-vars "GEMINI_MODEL=gemini-3.7-flash,GEMINI_REVIEW_MODEL=gemini-3.7-flash,OTEL_ENABLED=false,ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS=false,OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=" \
+            --min-instances 0 \
+            --max-instances 1 \
+            --memory 1Gi \
+            --cpu 1 \
+            --concurrency 4 \
+            --timeout 300 \
+            --allow-unauthenticated \
+            --quiet
+
+      - name: Verify public health endpoint
+        run: |
+          SERVICE_URL="$(gcloud run services describe "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format='value(status.url)')"
+          curl --fail --retry 6 --retry-delay 5 "$SERVICE_URL/health"

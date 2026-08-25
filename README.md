@@ -100,9 +100,10 @@ disabled before ADK is imported.
 
 ## Deployment status
 
-The application is deployed privately to Google Cloud Run in the dedicated
+The application is deployed publicly to Google Cloud Run in the dedicated
 `intake-trace-20260824-a89542` project. The root `Dockerfile` also listens on
 Railway's injected `PORT`, so the same image can be deployed there later without
-changing application code. See [docs/deployment.md](docs/deployment.md) for the
-live service details and authenticated verification command. Local files under
+changing application code. Pushes to `main` run tests, build the image, deploy
+the revision, and verify the public health endpoint. See
+[docs/deployment.md](docs/deployment.md) for details. Local files under
 `outputs/` are ephemeral on either platform and are not a persistence strategy.
